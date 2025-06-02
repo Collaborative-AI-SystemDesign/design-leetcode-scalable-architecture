@@ -5,6 +5,7 @@ import com.example.demo.example.domain.Example;
 import com.example.demo.global.enums.Catagories;
 import com.example.demo.global.enums.Diffculties;
 import com.example.demo.startercode.domain.Startercode;
+import com.example.demo.testcases.domain.Testcase;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -40,6 +41,7 @@ public class Problem {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "problem")
     private List<Startercode> startercodes;
-    
-    
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "problem")
+    private List<Testcase> testcases;
 }
