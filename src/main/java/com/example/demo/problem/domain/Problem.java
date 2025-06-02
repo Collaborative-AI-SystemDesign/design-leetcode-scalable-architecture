@@ -1,12 +1,16 @@
 package com.example.demo.problem.domain;
 
 
+import com.example.demo.example.domain.Example;
 import com.example.demo.global.enums.Catagories;
 import com.example.demo.global.enums.Diffculties;
+import com.example.demo.startercode.domain.Startercode;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Entity
 @Table(name = "problem")
@@ -31,4 +35,11 @@ public class Problem {
     @Column(columnDefinition = "TEXT")
     private String constraints;
 
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "problem")
+    private List<Example> examples;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "problem")
+    private List<Startercode> startercodes;
+    
+    
 }
