@@ -1,0 +1,35 @@
+# IDE
+.idea/
+*.iml
+
+# OS
+.DS_Store
+
+# Build
+/build/
+target/
+
+# Logs
+*.log
+
+# Secret
+.env
+
+
+# Gradle
+.gradle/
+
+# Build output
+build/
+
+# Minio data
+minio/
+
+# DB data
+db/
+
+# Redis data
+redis/
+
+# 기타 필요없는 파일
+*.log
