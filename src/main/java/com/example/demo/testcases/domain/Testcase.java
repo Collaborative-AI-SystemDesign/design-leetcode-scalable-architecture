@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "testcases")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Testcases {
+public class Testcase {
 
     @Id
     private Long id;
