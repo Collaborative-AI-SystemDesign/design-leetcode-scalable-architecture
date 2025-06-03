@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 public class Submission {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String code;

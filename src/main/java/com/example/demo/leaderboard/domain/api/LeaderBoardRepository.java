@@ -1,0 +1,29 @@
+package com.example.demo.leaderboard.domain.api;
+
+
+import com.example.demo.leaderboard.domain.LeaderBoard;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public interface LeaderBoardRepository extends JpaRepository<LeaderBoard, Long> {
+
+    @Query(
+            value = """
+        select leaderBoard_id
+             , contest_id
+             , user_id
+             , score
+             , time_taken    
+          from LeaderBoard
+         where contest_id=:contestId 
+        order by score desc, time_taken asc
+            limit 50
+    """, nativeQuery = true
+    )
+    List<LeaderBoard> getLeaderBoardByContestId(@Param("contestId") String contestId);
+}

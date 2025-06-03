@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 public class Testcase {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

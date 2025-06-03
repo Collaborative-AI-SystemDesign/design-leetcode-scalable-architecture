@@ -13,6 +13,7 @@ import org.hibernate.annotations.OnDelete;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Example {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

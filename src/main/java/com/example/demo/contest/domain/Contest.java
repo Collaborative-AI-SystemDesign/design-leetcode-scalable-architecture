@@ -16,6 +16,7 @@ import java.util.List;
 public class Contest {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;
@@ -31,4 +32,5 @@ public class Contest {
             inverseJoinColumns = @JoinColumn(name = "problem_id")
     )
     private List<Problem> problems;
+
 }
