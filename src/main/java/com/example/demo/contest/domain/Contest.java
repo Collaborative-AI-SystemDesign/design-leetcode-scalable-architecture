@@ -31,4 +31,5 @@ public class Contest {
             inverseJoinColumns = @JoinColumn(name = "problem_id")
     )
     private List<Problem> problems;
+
 }

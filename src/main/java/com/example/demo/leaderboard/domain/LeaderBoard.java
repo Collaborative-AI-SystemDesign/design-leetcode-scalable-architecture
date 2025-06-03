@@ -15,7 +15,9 @@ import lombok.NoArgsConstructor;
 public class LeaderBoard {
 
     @Id
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "leaderboard_id")
+    private Long leaderBoardId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "contest_id")
