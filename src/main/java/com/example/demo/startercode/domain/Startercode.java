@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "starter_code")
 public class Startercode {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

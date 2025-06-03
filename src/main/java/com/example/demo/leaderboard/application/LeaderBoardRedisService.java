@@ -21,17 +21,16 @@ public class LeaderBoardRedisService {
 
     public List<RankingEntry> getTopN(Long contestId, int n) {
 
-        log.info("*****************************getTopN start******************************");
         String key = "leaderboard:" + contestId;
         Set<ZSetOperations.TypedTuple<String>> topN = redisTemplate.opsForZSet().reverseRangeWithScores(key, 0, n - 1);
 
         List<RankingEntry> result = new ArrayList<>();
-        if (topN != null) {
-            for (ZSetOperations.TypedTuple<String> tuple : topN) {
-                Long userId = Long.parseLong(tuple.getValue());
-                int score = tuple.getScore().intValue();
-                result.add(RankingEntry.from(userId, score));
-            }
+        if (topN == null) return result;
+
+        for (ZSetOperations.TypedTuple<String> tuple : topN) {
+            Long userId = Long.parseLong(tuple.getValue());
+            int score = tuple.getScore().intValue();
+            result.add(RankingEntry.of(userId, score));
         }
         return result;
     }

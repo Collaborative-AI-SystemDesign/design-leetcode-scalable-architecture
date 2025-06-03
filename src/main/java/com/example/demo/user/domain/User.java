@@ -16,6 +16,7 @@ import java.util.List;
 public class User {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String nickname; // 단순히 사용자 표시용 닉네임
