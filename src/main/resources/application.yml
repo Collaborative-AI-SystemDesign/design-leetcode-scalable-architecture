@@ -12,6 +12,8 @@ spring:
       hibernate:
         format_sql: false
         show_sql: false
+        jdbc:
+          batch_size: 1000  # 배치사이즈를 명시적으로 설정해줘야 적용됨!
     show-sql: false
 
   cache:

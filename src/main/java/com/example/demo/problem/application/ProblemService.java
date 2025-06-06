@@ -1,6 +1,11 @@
 package com.example.demo.problem.application;
 
+import com.example.demo.global.common.ProblemDto;
+import com.example.demo.global.common.ProblemDtoMapper;
+import com.example.demo.global.common.SubmissionMessageDto;
+import com.example.demo.global.common.UserDto;
 import com.example.demo.global.enums.SubmissionStatus;
+import com.example.demo.global.rabbitmq.RabbitMqService;
 import com.example.demo.problem.controller.request.SubmissionRequest;
 import com.example.demo.problem.controller.response.ProblemDetailResponse;
 import com.example.demo.problem.controller.response.ProblemResponse;
@@ -13,7 +18,6 @@ import com.example.demo.testcases.domain.Testcase;
 import com.example.demo.user.domain.User;
 import com.example.demo.user.domain.api.UserApiRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -27,6 +31,7 @@ public class ProblemService {
     private final ProblemApiRepository problemRepository;
     private final UserApiRepository userRepository;
     private final SubmissionApiRepository submissionRepository;
+    private final RabbitMqService rabbitMqService;
 
     public List<ProblemResponse> getProblems(long start, long end) {
         return problemRepository.findByIdBetween(start, end)
@@ -66,7 +71,7 @@ public class ProblemService {
 
 
         // 결과 받아서 저장하기
-        Submission submission = Submission.of(
+        Submission submission = Submission.toEntity(
                 request.getCode(),
                 request.getCodingLanguage(),
                 SubmissionStatus.SUCCESS, // 실제로는 testResults에 따라 다르게 설정해야 합니다.
@@ -79,6 +84,27 @@ public class ProblemService {
 
         return SubmissionResponse.of(testResults);
     }
+
+
+    public SubmissionResponse submitProblemWithMq(Long problemId, SubmissionRequest request) {
+        Problem problem = problemRepository.findById(problemId)
+                .orElseThrow(() -> new IllegalArgumentException("문제가 존재하지 않습니다."));
+        User user = userRepository.findById(1L)
+                .orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다."));
+
+        ProblemDto problemDto = ProblemDtoMapper.fromEntity(problem);
+        UserDto userDto = new UserDto(user.getId(), user.getNickname());
+        SubmissionMessageDto submissionMessageDto = new SubmissionMessageDto(request, userDto, problemDto);
+        rabbitMqService.sendMessage(submissionMessageDto);
+
+        // MQ consumer에서 submission 저장을 한다.
+        // client에서 1~2초 간격으로 db 저장데이터를 확인한다. 그 도중에는 로딩 중 표시를 사용자에게 노출
+
+        // waiting response 필요
+        List<SubmissionStatus> testResults = new ArrayList<>();
+        return SubmissionResponse.of(testResults);
+    }
+
 
     /**
      * 샌드박스 환경에서 실행할 수 있는 Java 프로그램 코드를 생성합니다.

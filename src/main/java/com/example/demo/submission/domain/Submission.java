@@ -44,7 +44,7 @@ public class Submission {
     private Problem problem;
 
 
-    public static Submission of(String code, CodingLanguages language, SubmissionStatus status,
+    public static Submission toEntity(String code, CodingLanguages language, SubmissionStatus status,
                                 double runtime, double memory, User user, Problem problem) {
         return Submission.builder()
                 .code(code)

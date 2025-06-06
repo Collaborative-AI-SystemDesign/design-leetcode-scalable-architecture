@@ -14,7 +14,7 @@ public class LeaderBoardController {
     private final LeaderBoardService leaderBoardService;
 
     @GetMapping("/v1/contests/{contest_id}/leaderboard")
-    public LeaderBoardResponse getLeaderBoardFromRdb(@PathVariable("contest_id") String contestId) {
+    public LeaderBoardResponse getLeaderBoardFromRdb(@PathVariable("contest_id") Long contestId) {
         LeaderBoardResponse response = leaderBoardService.getLeaderBoardInfo(contestId);
         return response;
     }

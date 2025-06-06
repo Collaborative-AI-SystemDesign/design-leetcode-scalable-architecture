@@ -12,6 +12,17 @@ import java.util.List;
 @Repository
 public interface LeaderBoardRepository extends JpaRepository<LeaderBoard, Long> {
 
+
+    // Leaderboard
+
+    // index 추가
+    // contestId
+    // score desc
+    // CREATE INDEX idx_contest_score ON LeaderBoard (contest_id, score DESC);
+
+    // redis
+    // sortedset
+
     @Query(
             value = """
         select leaderBoard_id
@@ -21,9 +32,9 @@ public interface LeaderBoardRepository extends JpaRepository<LeaderBoard, Long> 
              , time_taken    
           from LeaderBoard
          where contest_id=:contestId 
-        order by score desc, time_taken asc
+        order by score desc
             limit 50
     """, nativeQuery = true
     )
-    List<LeaderBoard> getLeaderBoardByContestId(@Param("contestId") String contestId);
+    List<LeaderBoard> getLeaderBoardByContestId(@Param("contestId") Long contestId);
 }
