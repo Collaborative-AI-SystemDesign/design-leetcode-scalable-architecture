@@ -19,7 +19,7 @@ public class LeaderBoardService {
     private final LeaderBoardRedisService leaderBoardRedisService;
 
     @Transactional(readOnly = true)
-    public LeaderBoardResponse getLeaderBoardInfo(String contestId) {
+    public LeaderBoardResponse getLeaderBoardInfo(Long contestId) {
 
         return LeaderBoardResponse.from(leaderBoardRepository.getLeaderBoardByContestId(contestId)
                 .stream()
@@ -42,7 +42,7 @@ public class LeaderBoardService {
         // 1. Redis에 데이터가 없다면
         if (rankingEntries.isEmpty()) {
             // 2. RDB에서 조회
-            List<RankingEntry> entriesFromRDB = leaderBoardRepository.getLeaderBoardByContestId(contestId.toString())
+            List<RankingEntry> entriesFromRDB = leaderBoardRepository.getLeaderBoardByContestId(contestId)
                     .stream()
                     .map(RankingEntry::from)
                     .toList();

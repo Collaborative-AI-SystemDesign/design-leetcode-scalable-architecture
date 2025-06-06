@@ -5,8 +5,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
-@AllArgsConstructor
 public class SubmissionRequest {
     private CodingLanguages codingLanguage;
     private String code;
+
+    public SubmissionRequest(CodingLanguages codingLanguage, String code) {
+        this.codingLanguage = codingLanguage;
+        this.code = code;
+    }
 }
