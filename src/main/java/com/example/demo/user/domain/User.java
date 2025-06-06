@@ -3,16 +3,16 @@ package com.example.demo.user.domain;
 
 import com.example.demo.submission.domain.Submission;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
 @Entity
 @Table(name = "user")
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class User {
 
     @Id
@@ -23,5 +23,12 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private List<Submission> submissions;
+
+    public static User of(Long id, String nickname) {
+        return User.builder()
+                .id(id)
+                .nickname(nickname)
+                .build();
+    }
 
 }
