@@ -6,9 +6,14 @@ import com.example.demo.problem.controller.response.ProblemDetailResponse;
 import com.example.demo.problem.controller.response.ProblemResponse;
 import com.example.demo.problem.controller.response.SubmissionResponse;
 import com.example.demo.problem.domain.Problem;
-import com.example.demo.problem.domain.api.ProblemRepository;
+import com.example.demo.problem.domain.api.ProblemApiRepository;
+import com.example.demo.submission.api.SubmissionApiRepository;
+import com.example.demo.submission.domain.Submission;
 import com.example.demo.testcases.domain.Testcase;
+import com.example.demo.user.domain.User;
+import com.example.demo.user.domain.api.UserApiRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -19,7 +24,9 @@ import java.util.Random;
 @RequiredArgsConstructor
 public class ProblemService {
 
-    private final ProblemRepository problemRepository;
+    private final ProblemApiRepository problemRepository;
+    private final UserApiRepository userRepository;
+    private final SubmissionApiRepository submissionRepository;
 
     public List<ProblemResponse> getProblems(long start, long end) {
         return problemRepository.findByIdBetween(start, end)
@@ -36,6 +43,9 @@ public class ProblemService {
     public SubmissionResponse submitProblem(Long problemId, SubmissionRequest request) {
         Problem problem = problemRepository.findById(problemId)
                 .orElseThrow(() -> new IllegalArgumentException("문제가 존재하지 않습니다."));
+        User user = userRepository.findById(1L)
+                .orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다."));
+
         List<Testcase> testcases = problem.getTestcases();
         String executableCode = generateExecutableCode(request.getCode(), testcases);
 
@@ -46,12 +56,27 @@ public class ProblemService {
                 .map(Boolean::parseBoolean)
                 .toList();
         */
-
         List<SubmissionStatus> testResults = new ArrayList<>();
         for (int i=0; i < testcases.size(); i++) {
             testResults.add(SubmissionStatus.SUCCESS);
         }
-        sleep(new Random().nextInt(1000, 3000)); // Simulate execution time
+        double runtime = new Random().nextDouble(0.1, 2.0); // Simulate runtime in seconds
+        double memory = new Random().nextDouble(10, 100); // Simulate memory usage in MB
+        sleep((int)runtime*1000); // Simulate execution time
+
+
+        // 결과 받아서 저장하기
+        Submission submission = Submission.of(
+                request.getCode(),
+                request.getCodingLanguage(),
+                SubmissionStatus.SUCCESS, // 실제로는 testResults에 따라 다르게 설정해야 합니다.
+                runtime,
+                memory,
+                user,
+                problem
+        );
+        submissionRepository.save(submission);
+
         return SubmissionResponse.of(testResults);
     }
 
