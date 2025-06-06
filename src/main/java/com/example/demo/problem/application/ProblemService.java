@@ -35,7 +35,6 @@ public class ProblemService {
                 .toList();
     }
 
-    @Cacheable(value = "problemDetail", key = "#problemId")
     public ProblemDetailResponse getDetailProblem(long problemId) {
         return ProblemDetailResponse.from(problemRepository.findById(problemId)
                 .orElseThrow(() -> new IllegalArgumentException("문제가 존재하지 않습니다.")));
