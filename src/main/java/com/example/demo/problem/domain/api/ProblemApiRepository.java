@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface ProblemApiRepository extends JpaRepository<Problem, Long> {
     List<Problem> findByIdBetween(long start, long end);
+    List<Problem> findByIdGreaterThan(Long cursor, org.springframework.data.domain.Pageable pageable);
 }

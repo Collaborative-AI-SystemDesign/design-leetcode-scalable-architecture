@@ -18,6 +18,10 @@ import com.example.demo.testcases.domain.Testcase;
 import com.example.demo.user.domain.User;
 import com.example.demo.user.domain.api.UserApiRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -36,6 +40,28 @@ public class ProblemService {
     public List<ProblemResponse> getProblems(long start, long end) {
         return problemRepository.findByIdBetween(start, end)
                 .stream()
+                .map(ProblemResponse::from)
+                .toList();
+    }
+
+    // 문제 다 가져오기 offset 기반 페이징
+    public Page<ProblemResponse> getProblemPage(int page, int size) {
+        var pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "id"));
+        Page<Problem> problemPage = problemRepository.findAll(pageable);
+        return problemPage.map(ProblemResponse::from);
+    }
+
+    // 문제 다 가져오기 cursor 기반 페이징
+    public List<ProblemResponse> getProblemsByCursor(Long cursor, int limit) {
+        Pageable pageable = PageRequest.of(0, limit, Sort.by(Sort.Direction.ASC, "id"));
+        List<Problem> problems;
+
+        if (cursor == null) {
+            problems = problemRepository.findAll(pageable).getContent();
+        } else {
+            problems = problemRepository.findByIdGreaterThan(cursor, pageable);
+        }
+        return problems.stream()
                 .map(ProblemResponse::from)
                 .toList();
     }
