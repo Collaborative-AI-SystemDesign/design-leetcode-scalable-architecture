@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -62,7 +64,9 @@ public class ProblemServiceTest {
             long start = System.currentTimeMillis();
 
             while (true) {
-                Page<ProblemResponse> problemPage = problemService.getProblemPage(page, size);
+                // 페이지 요청
+                Pageable pageable = PageRequest.of(page, size);
+                Page<ProblemResponse> problemPage = problemService.getProblemPage(pageable);
 
                 if (problemPage.isEmpty()) break;
 
