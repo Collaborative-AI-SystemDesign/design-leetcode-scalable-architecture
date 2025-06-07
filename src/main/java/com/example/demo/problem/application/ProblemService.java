@@ -45,8 +45,7 @@ public class ProblemService {
     }
 
     // 문제 다 가져오기 offset 기반 페이징
-    public Page<ProblemResponse> getProblemPage(int page, int size) {
-        var pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "id"));
+    public Page<ProblemResponse> getProblemPage(Pageable pageable) {
         Page<Problem> problemPage = problemRepository.findAll(pageable);
         return problemPage.map(ProblemResponse::from);
     }

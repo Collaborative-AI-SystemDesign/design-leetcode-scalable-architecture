@@ -9,6 +9,9 @@ import com.example.demo.problem.controller.response.ProblemResponse;
 import com.example.demo.problem.controller.response.SubmissionResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,9 +30,9 @@ public class ProblemController {
 
     @GetMapping("/problems/offset")
     public ApiResponse<PagingResponse<ProblemResponse>> getProblemsByOffset(
-            @RequestParam (value = "page", defaultValue = "0") int page,
-            @RequestParam (value = "size", defaultValue = "100") int size) {
-        Page<ProblemResponse> pageResult = problemService.getProblemPage(page, size);
+            @PageableDefault(page = 0, size = 100, sort = "id", direction = Sort.Direction.ASC) Pageable pageable
+    ) {
+        Page<ProblemResponse> pageResult = problemService.getProblemPage(pageable);
         return ApiResponse.success(PagingResponse.from(pageResult));
     }
 
