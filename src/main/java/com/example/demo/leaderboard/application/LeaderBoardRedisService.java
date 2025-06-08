@@ -37,6 +37,7 @@ public class LeaderBoardRedisService {
 
     /**
      * 특정 contestId의 리더보드에 userId의 점수를 추가(또는 업데이트)합니다.
+     * 51번째 이후의 점수는 삭제합니다.
      *
      * @param contestId 리더보드 식별용 contestId
      * @param userId 사용자 식별용 userId
@@ -45,5 +46,6 @@ public class LeaderBoardRedisService {
     public void addScore(long contestId, long userId, int score) {
         String key = "leaderboard:" + contestId;
         redisTemplate.opsForZSet().add(key, String.valueOf(userId), score);
+        redisTemplate.opsForZSet().removeRange(key, 50, -1);
     }
 }

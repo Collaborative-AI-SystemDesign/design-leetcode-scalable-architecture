@@ -36,5 +36,5 @@ public interface LeaderBoardRepository extends JpaRepository<LeaderBoard, Long> 
             limit 50
     """, nativeQuery = true
     )
-    List<LeaderBoard> getLeaderBoardByContestId(@Param("contestId") Long contestId);
+    List<LeaderBoard> getTop50LeaderBoardByContestId(@Param("contestId") Long contestId);
 }
