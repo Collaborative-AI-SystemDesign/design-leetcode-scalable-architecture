@@ -8,6 +8,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "submission")
@@ -23,6 +24,8 @@ public class Submission {
 
     private String code;
 
+    private String encodedCode; //Sha256 encoded code for duplicate check
+
     @Enumerated(EnumType.STRING)
     private CodingLanguages language;
 
@@ -34,6 +37,11 @@ public class Submission {
     private double memory;  // MB
 
     private LocalDateTime submittedAt;
+
+    private SubmissionStatus codeResult;
+
+    @Column(columnDefinition = "TEXT")
+    private String testResults;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -53,6 +61,8 @@ public class Submission {
                 .runtime(runtime)
                 .memory(memory)
                 .submittedAt(LocalDateTime.now())
+                .codeResult(codeResult)
+                .testResults(testResults)
                 .user(user)
                 .problem(problem)
                 .build();

@@ -52,7 +52,8 @@ public class ProblemController {
     @PostMapping("/problems/{problemId}/submission")
     public ApiResponse<SubmissionResponse> submitProblem(
             @PathVariable("problemId") long problemId,
-            @RequestBody SubmissionRequest request) {
-        return ApiResponse.success(problemService.submitProblem(problemId, request));
+            @RequestBody SubmissionRequest request,
+            @RequestHeader(value = "idempotency-key") String idempotencyKey) {
+        return ApiResponse.success(problemService.submitProblem(problemId, request, idempotencyKey));
     }
 }
