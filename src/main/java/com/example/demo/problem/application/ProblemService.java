@@ -18,6 +18,7 @@ import com.example.demo.testcases.domain.Testcase;
 import com.example.demo.user.domain.User;
 import com.example.demo.user.domain.api.UserApiRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -68,6 +69,13 @@ public class ProblemService {
     public ProblemDetailResponse getDetailProblem(long problemId) {
         return ProblemDetailResponse.from(problemRepository.findById(problemId)
                 .orElseThrow(() -> new IllegalArgumentException("문제가 존재하지 않습니다.")));
+    }
+
+    @Cacheable(value = "problems", key = "#problemId")
+    public ProblemDetailResponse getDetailProblemWithCache(Long problemId) {
+        Problem problem = problemRepository.findById(problemId)
+                .orElseThrow(() -> new IllegalArgumentException("문제가 존재하지 않습니다."));
+        return ProblemDetailResponse.from(problem);
     }
 
     public SubmissionResponse submitProblem(Long problemId, SubmissionRequest request) {
