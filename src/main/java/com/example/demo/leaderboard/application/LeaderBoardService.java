@@ -5,8 +5,6 @@ import com.example.demo.leaderboard.controller.response.LeaderBoardResponse;
 import com.example.demo.leaderboard.domain.RankingEntry;
 import com.example.demo.leaderboard.domain.api.LeaderBoardRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.aggregation.DocumentOperators;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,12 +19,11 @@ public class LeaderBoardService {
     @Transactional(readOnly = true)
     public LeaderBoardResponse getLeaderBoardInfo(Long contestId) {
 
-        return LeaderBoardResponse.from(leaderBoardRepository.getLeaderBoardByContestId(contestId)
+        return LeaderBoardResponse.from(leaderBoardRepository.getTop50LeaderBoardByContestId(contestId)
                 .stream()
                 .map(RankingEntry::from)
                 .toList());
     }
-
 
     /***
      * 1. submission 때 rdb 뿐만 아니라 redis에도 데이터 저장
@@ -42,7 +39,7 @@ public class LeaderBoardService {
         // 1. Redis에 데이터가 없다면
         if (rankingEntries.isEmpty()) {
             // 2. RDB에서 조회
-            List<RankingEntry> entriesFromRDB = leaderBoardRepository.getLeaderBoardByContestId(contestId)
+            List<RankingEntry> entriesFromRDB = leaderBoardRepository.getTop50LeaderBoardByContestId(contestId)
                     .stream()
                     .map(RankingEntry::from)
                     .toList();
