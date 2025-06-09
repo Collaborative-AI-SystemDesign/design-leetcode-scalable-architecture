@@ -1,9 +1,9 @@
 spring:
   datasource:
     # 로컬 MySQL
-    url: jdbc:mysql://________:3306/_________?serverTimezone=UTC&characterEncoding=UTF-8
-    username: ____
-    password: ____
+    url: jdbc:mysql://${MYSQL_HOST}:3306/${MYSQL_DB}?serverTimezone=UTC&characterEncoding=UTF-8
+    username: ${MYSQL_USER}
+    password: ${MYSQL_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
@@ -22,23 +22,35 @@ spring:
 
   data:
     redis:
-      host: localhost
+      host: ${REDIS_HOST}
       port: 6379
+#      host: localhost
+#      port: 6379
 
 # rabbitmq 설정
   rabbitmq:
-    host: localhost # RabbitMQ host ip
+    host: ${RABBITMQ_HOST} # RabbitMQ host ip
     port: 5672 # RabbitMQ port
-    username: guest # RabbitMQ 웹 관리 콘솔 아이디
-    password: guest # RabbitMQ 웹 관리 콘솔 비밀번호
+    username: ${RABBITMQ_USERNAME} # RabbitMQ 웹 관리 콘솔 아이디
+    password: ${RABBITMQ_PASSWORD} # RabbitMQ 웹 관리 콘솔 비밀번호
+#    host: localhost # RabbitMQ host ip
+#    port: 5672 # RabbitMQ port
+#    username: guest # RabbitMQ 웹 관리 콘솔 아이디
+#    password: guest # RabbitMQ 웹 관리 콘솔 비밀번호
 
 rabbitmq:
   queue:
-    name: sample-queue # 사용할 queue 이름
+    name: test-queue # 사용할 queue 이름
   exchange:
-    name: sample-exchange # 사용할 exchange 이름
+    name: test-exchange # 사용할 exchange 이름
   routing:
-    key: key
+    key: test-key
+#  queue:
+#    name: sample-queue # 사용할 queue 이름
+#  exchange:
+#    name: sample-exchange # 사용할 exchange 이름
+#  routing:
+#    key: key
 
 management:
   endpoints:
