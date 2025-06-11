@@ -57,7 +57,7 @@ class ProblemControllerTest {
 
     @Test
     void submitProblem() {
-        SubmissionRequest request = new SubmissionRequest(CodingLanguages.JAVA, "print('Hello, World!')");
+        SubmissionRequest request = new SubmissionRequest(CodingLanguages.JAVA, "print('Hello, World!')",1L);
 
         ApiResponse response = restClient.post()
                 .uri("/problems/1/submission")

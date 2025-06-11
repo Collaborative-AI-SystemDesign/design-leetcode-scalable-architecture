@@ -37,20 +37,20 @@ public class LeaderBoardService {
         List<RankingEntry> rankingEntries = leaderBoardRedisService.getTopN(contestId, 50);
 
         // 1. Redis에 데이터가 없다면
-        if (rankingEntries.isEmpty()) {
-            // 2. RDB에서 조회
-            List<RankingEntry> entriesFromRDB = leaderBoardRepository.getTop50LeaderBoardByContestId(contestId)
-                    .stream()
-                    .map(RankingEntry::from)
-                    .toList();
-
-            // 3. Redis에 적재
-            for (RankingEntry entry : entriesFromRDB) {
-                leaderBoardRedisService.addScore(contestId, entry.getUserId(), entry.getScore());
-            }
-
-            rankingEntries = entriesFromRDB;
-        }
+//        if (rankingEntries.isEmpty()) {
+//            // 2. RDB에서 조회
+//            List<RankingEntry> entriesFromRDB = leaderBoardRepository.getTop50LeaderBoardByContestId(contestId)
+//                    .stream()
+//                    .map(RankingEntry::from)
+//                    .toList();
+//
+//            // 3. Redis에 적재
+//            for (RankingEntry entry : entriesFromRDB) {
+//                leaderBoardRedisService.addScore(contestId, entry.getUserId(), entry.getScore());
+//            }
+//
+//            rankingEntries = entriesFromRDB;
+//        }
 
         return LeaderBoardResponse.from(rankingEntries);
     }

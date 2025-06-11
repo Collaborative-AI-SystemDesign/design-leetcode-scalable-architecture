@@ -30,4 +30,14 @@ public class LeaderBoard {
     private int score;
 
     private long timeTaken; // in seconds
+
+    public static LeaderBoard toEntity(int score, long timeTaken, Contest contest, User user) {
+        LeaderBoard leaderboard = new LeaderBoard();
+        leaderboard.contest = contest;
+        leaderboard.user = user;
+        leaderboard.score = score;
+        leaderboard.timeTaken = timeTaken;
+        return leaderboard;
+    }
+
 }

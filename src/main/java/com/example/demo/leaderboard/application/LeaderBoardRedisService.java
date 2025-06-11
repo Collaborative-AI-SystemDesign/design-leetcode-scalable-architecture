@@ -8,6 +8,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -46,6 +47,9 @@ public class LeaderBoardRedisService {
     public void addScore(long contestId, long userId, int score) {
         String key = "leaderboard:" + contestId;
         redisTemplate.opsForZSet().add(key, String.valueOf(userId), score);
-        redisTemplate.opsForZSet().removeRange(key, 50, -1);
+        //redisTemplate.opsForZSet().removeRange(key, 50, -1);
+
+        //  마지막 제출자가 낸 시간으로 부터 1시간 후 자동으로 만료되도록 설정.
+        redisTemplate.expire(key, Duration.ofHours(1));
     }
 }
