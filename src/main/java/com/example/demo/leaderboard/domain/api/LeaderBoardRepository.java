@@ -30,7 +30,7 @@ public interface LeaderBoardRepository extends JpaRepository<LeaderBoard, Long> 
              , user_id
              , score
              , time_taken    
-          from LeaderBoard
+          from leaderboard
          where contest_id=:contestId 
         order by score desc
             limit 50

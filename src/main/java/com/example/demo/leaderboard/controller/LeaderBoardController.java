@@ -13,15 +13,15 @@ public class LeaderBoardController {
 
     private final LeaderBoardService leaderBoardService;
 
-    @GetMapping("/v1/contests/{contest_id}/leaderboard")
-    public LeaderBoardResponse getLeaderBoardFromRdb(@PathVariable("contest_id") Long contestId) {
-        LeaderBoardResponse response = leaderBoardService.getLeaderBoardInfo(contestId);
-        return response;
-    }
+//    @GetMapping("/v1/contests/{contest_id}/leaderboard")
+//    public LeaderBoardResponse getLeaderBoardFromRdb(@PathVariable("contest_id") Long contestId) {
+//        LeaderBoardResponse response = leaderBoardService.getLeaderBoardInfo(contestId);
+//        return response;
+//    }
 
-    @GetMapping("/v1/redis/contests/{contest_id}/leaderboard")
-    public LeaderBoardResponse getLeaderBoardWithCache(@PathVariable("contest_id") String contestId) {
-        LeaderBoardResponse response = leaderBoardService.getLeaderBoardWithCache(Long.valueOf(contestId));
+    @GetMapping("/v1/contests/{contest_id}/leaderboard")
+    public LeaderBoardResponse getLeaderBoardWithCache(@PathVariable("contest_id") Long contestId) {
+        LeaderBoardResponse response = leaderBoardService.getLeaderBoardWithCache(contestId);
         return response;
     }
 }
