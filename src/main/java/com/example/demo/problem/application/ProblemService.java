@@ -89,7 +89,7 @@ public class ProblemService {
         return ProblemDetailResponse.from(problem);
     }
 
-    @Transactional
+
     public SubmissionResponse submitProblem(Long problemId, SubmissionRequest request) {
         Problem problem = problemRepository.findById(problemId)
                 .orElseThrow(() -> new IllegalArgumentException("문제가 존재하지 않습니다."));
@@ -106,6 +106,7 @@ public class ProblemService {
                 .map(Boolean::parseBoolean)
                 .toList();
         */
+
         List<SubmissionStatus> testResults = new ArrayList<>();
         for (int i=0; i < testcases.size(); i++) {
             testResults.add(SubmissionStatus.SUCCESS);
@@ -113,7 +114,6 @@ public class ProblemService {
         double runtime = new Random().nextDouble(0.1, 2.0); // Simulate runtime in seconds
         double memory = new Random().nextDouble(10, 100); // Simulate memory usage in MB
         sleep((int)runtime*1000); // Simulate execution time
-
 
         // 결과 받아서 저장하기
         Submission submission = Submission.toEntity(
@@ -125,6 +125,14 @@ public class ProblemService {
                 user,
                 problem
         );
+        storeDataInTheDB(submission, request, user);
+
+        return SubmissionResponse.of(testResults);
+    }
+
+
+    @Transactional
+    public void storeDataInTheDB(Submission submission, SubmissionRequest request, User user) {
         submissionRepository.save(submission);
 
         Long contestId = request.getContestId();
@@ -144,7 +152,6 @@ public class ProblemService {
             log.info("Leaderboard saved User Id : {}",save.getUser().getId());
         }
 
-        return SubmissionResponse.of(testResults);
     }
 
 
