@@ -112,7 +112,7 @@ public class ProblemService {
         }
         double runtime = new Random().nextDouble(0.1, 2.0); // Simulate runtime in seconds
         double memory = new Random().nextDouble(10, 100); // Simulate memory usage in MB
-        //sleep((int)runtime*1000); // Simulate execution time
+        sleep((int)runtime*1000); // Simulate execution time
 
 
         // 결과 받아서 저장하기
