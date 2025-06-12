@@ -1,23 +1,19 @@
 package com.example.demo.problem.application;
 
-import com.example.demo.contest.domain.Contest;
-import com.example.demo.contest.domain.api.ContestRepository;
+
 import com.example.demo.global.common.ProblemDto;
 import com.example.demo.global.common.ProblemDtoMapper;
 import com.example.demo.global.common.SubmissionMessageDto;
 import com.example.demo.global.common.UserDto;
 import com.example.demo.global.enums.SubmissionStatus;
 import com.example.demo.global.rabbitmq.RabbitMqService;
-import com.example.demo.leaderboard.application.LeaderBoardRedisService;
-import com.example.demo.leaderboard.domain.LeaderBoard;
-import com.example.demo.leaderboard.domain.api.LeaderBoardRepository;
 import com.example.demo.problem.controller.request.SubmissionRequest;
 import com.example.demo.problem.controller.response.ProblemDetailResponse;
 import com.example.demo.problem.controller.response.ProblemResponse;
 import com.example.demo.problem.controller.response.SubmissionResponse;
 import com.example.demo.problem.domain.Problem;
 import com.example.demo.problem.domain.api.ProblemApiRepository;
-import com.example.demo.submission.api.SubmissionApiRepository;
+import com.example.demo.submission.application.SubmissionService;
 import com.example.demo.submission.domain.Submission;
 import com.example.demo.testcases.domain.Testcase;
 import com.example.demo.user.domain.User;
@@ -30,7 +26,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,10 +38,7 @@ public class ProblemService {
 
     private final ProblemApiRepository problemRepository;
     private final UserApiRepository userRepository;
-    private final SubmissionApiRepository submissionRepository;
-    private final LeaderBoardRepository leaderBoardRepository;
-    private final LeaderBoardRedisService leaderBoardRedisService;
-    private final ContestRepository contestRepository;
+    private final SubmissionService submissionService;
     private final RabbitMqService rabbitMqService;
 
     public List<ProblemResponse> getProblems(long start, long end) {
@@ -125,34 +117,12 @@ public class ProblemService {
                 user,
                 problem
         );
-        storeDataInTheDB(submission, request, user);
+
+        submissionService.saveSubmissionAndLeaderboard(submission, request, user);
 
         return SubmissionResponse.of(testResults);
     }
 
-
-    @Transactional
-    public void storeDataInTheDB(Submission submission, SubmissionRequest request, User user) {
-        submissionRepository.save(submission);
-
-        Long contestId = request.getContestId();
-        if (contestId != null) {
-            Contest contest = contestRepository.findById(contestId).orElseThrow();
-            // 테스트용 코드로 score를 500 ~ 999점 사이로 넣는다.
-            int score = 500 + new Random().nextInt(999 - 500 + 1);
-            // 100~ 4000 사이로 랜덤값이 나오는데 score에 따라서 계산됨.
-            long timeTaken = (long) (4000 - (4000 - 100) * (new Random().nextInt(1000) / 999.0));
-
-            // save user score info to Redis
-            leaderBoardRedisService.addScore(contestId,user.getId(), score);
-
-            // save leaderboard info to the RDB
-            LeaderBoard leaderBoard = LeaderBoard.toEntity(score, timeTaken, contest, user);
-            LeaderBoard save = leaderBoardRepository.save(leaderBoard);
-            log.info("Leaderboard saved User Id : {}",save.getUser().getId());
-        }
-
-    }
 
 
     public SubmissionResponse submitProblemWithMq(Long problemId, SubmissionRequest request) {
