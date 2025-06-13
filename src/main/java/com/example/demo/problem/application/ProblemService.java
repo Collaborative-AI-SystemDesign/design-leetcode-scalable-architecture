@@ -30,6 +30,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Slf4j
 @Service
@@ -88,7 +89,7 @@ public class ProblemService {
         User user = userRepository.findById(request.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다."));
 
-        List<Testcase> testcases = problem.getTestcases();
+        List<Testcase> testcases = new ArrayList<>();
         String executableCode = generateExecutableCode(request.getCode(), testcases);
 
         /* Todo: 실제로 샌드박스 환경에서 실행하는 코드로 변경하고 요청을 보내야합니다.
@@ -103,8 +104,12 @@ public class ProblemService {
         for (int i=0; i < testcases.size(); i++) {
             testResults.add(SubmissionStatus.SUCCESS);
         }
-        double runtime = new Random().nextDouble(0.1, 2.0); // Simulate runtime in seconds
-        double memory = new Random().nextDouble(10, 100); // Simulate memory usage in MB
+
+        double runtime =  ThreadLocalRandom.current().nextDouble(0.1, 2.0);
+        double memory = ThreadLocalRandom.current().nextDouble(10, 100);
+
+//        double runtime = new Random().nextDouble(0.1, 2.0); // Simulate runtime in seconds
+//        double memory = new Random().nextDouble(10, 100); // Simulate memory usage in MB
         sleep((int)runtime*1000); // Simulate execution time
 
         // 결과 받아서 저장하기

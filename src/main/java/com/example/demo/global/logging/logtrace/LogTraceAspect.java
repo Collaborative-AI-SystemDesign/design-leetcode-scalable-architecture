@@ -16,7 +16,7 @@ import java.util.Arrays;
 public class LogTraceAspect {
     private final LogTrace trace;
 
-    @Around("execution(* com.example.demo..*(..)) && !within(com.example.demo.global..*)")
+//    @Around("execution(* com.example.demo..*(..)) && !within(com.example.demo.global..*)")
     public Object doTrace(ProceedingJoinPoint joinPoint) throws Throwable {
         String methodName = joinPoint.getSignature().toShortString();
         String args = Arrays.toString(joinPoint.getArgs()); // 파라미터 값 로깅
