@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 @RequiredArgsConstructor
@@ -30,10 +31,13 @@ public class SubmissionService {
         Long contestId = request.getContestId();
         if (contestId != null) {
             Contest contest = contestRepository.findById(contestId).orElseThrow();
-            // 테스트용 코드로 score를 500 ~ 999점 사이로 넣는다.
-            int score = 500 + new Random().nextInt(999 - 500 + 1);
-            // 100~ 4000 사이로 랜덤값이 나오는데 score에 따라서 계산됨.
-            long timeTaken = (long) (4000 - (4000 - 100) * (new Random().nextInt(1000) / 999.0));
+//            // 테스트용 코드로 score를 500 ~ 999점 사이로 넣는다.
+//            int score = 500 + new Random().nextInt(999 - 500 + 1);
+//            // 100~ 4000 사이로 랜덤값이 나오는데 score에 따라서 계산됨.
+//            long timeTaken = (long) (4000 - (4000 - 100) * (new Random().nextInt(1000) / 999.0));
+
+            int score = ThreadLocalRandom.current().nextInt(500, 999);
+            long timeTaken = ThreadLocalRandom.current().nextLong(100, 4000);
 
             // save user score info to Redis
             leaderBoardRedisService.addScore(contestId,user.getId(), score);
