@@ -26,15 +26,16 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
+
 public class ProblemService {
 
     private final ProblemApiRepository problemRepository;
@@ -42,6 +43,7 @@ public class ProblemService {
     private final SubmissionService submissionService;
     private final RabbitMqService rabbitMqService;
 
+    @Transactional(readOnly = true)
     public List<ProblemResponse> getProblems(long start, long end) {
         return problemRepository.findByIdBetween(start, end)
                 .stream()
@@ -70,11 +72,14 @@ public class ProblemService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public ProblemDetailResponse getDetailProblem(long problemId) {
         return ProblemDetailResponse.from(problemRepository.findById(problemId)
                 .orElseThrow(() -> new IllegalArgumentException("문제가 존재하지 않습니다.")));
     }
 
+
+    @Transactional(readOnly = true)
     @Cacheable(value = "problems", key = "#problemId")
     public ProblemDetailResponse getDetailProblemWithCache(Long problemId) {
         Problem problem = problemRepository.findById(problemId)
