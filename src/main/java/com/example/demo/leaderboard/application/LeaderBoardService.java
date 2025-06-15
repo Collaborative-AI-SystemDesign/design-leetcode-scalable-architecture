@@ -16,7 +16,6 @@ public class LeaderBoardService {
     private final LeaderBoardRepository leaderBoardRepository;
     private final LeaderBoardRedisService leaderBoardRedisService;
 
-    @Transactional(readOnly = true)
     public LeaderBoardResponse getLeaderBoardInfo(Long contestId) {
 
         return LeaderBoardResponse.from(leaderBoardRepository.getTop50LeaderBoardByContestId(contestId)
@@ -32,7 +31,6 @@ public class LeaderBoardService {
      * 4. 대회 종료 후 30분 후에는 redis 키 삭제
      */
 
-    @Transactional(readOnly = true)
     public LeaderBoardResponse getLeaderBoardWithCache(Long contestId) {
         List<RankingEntry> rankingEntries = leaderBoardRedisService.getTopN(contestId, 50);
 
