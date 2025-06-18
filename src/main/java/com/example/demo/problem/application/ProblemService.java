@@ -1,20 +1,17 @@
 package com.example.demo.problem.application;
 
 
-import com.example.demo.global.common.ProblemDto;
-import com.example.demo.global.common.ProblemDtoMapper;
-import com.example.demo.global.common.SubmissionMessageDto;
-import com.example.demo.global.common.UserDto;
 import com.example.demo.global.enums.SubmissionStatus;
 import com.example.demo.global.rabbitmq.RabbitMqService;
 import com.example.demo.problem.controller.request.SubmissionRequest;
+import com.example.demo.problem.controller.request.SubmissionRequestMessageDto;
 import com.example.demo.problem.controller.response.ProblemDetailResponse;
 import com.example.demo.problem.controller.response.ProblemResponse;
-import com.example.demo.problem.controller.response.SubmissionResponse;
+import com.example.demo.problem.controller.response.SubmissionCreatedResponse;
 import com.example.demo.problem.domain.Problem;
 import com.example.demo.problem.domain.api.ProblemApiRepository;
-import com.example.demo.submission.application.SubmissionService;
 import com.example.demo.submission.domain.Submission;
+import com.example.demo.submission.domain.api.SubmissionRepository;
 import com.example.demo.testcases.domain.Testcase;
 import com.example.demo.user.domain.User;
 import com.example.demo.user.domain.api.UserApiRepository;
@@ -28,7 +25,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -40,8 +36,8 @@ public class ProblemService {
 
     private final ProblemApiRepository problemRepository;
     private final UserApiRepository userRepository;
-    private final SubmissionService submissionService;
     private final RabbitMqService rabbitMqService;
+    private final SubmissionRepository submissionRepository;
 
     @Transactional(readOnly = true)
     public List<ProblemResponse> getProblems(long start, long end) {
@@ -87,73 +83,90 @@ public class ProblemService {
         return ProblemDetailResponse.from(problem);
     }
 
+//mq쓰지 않았을 때의 기존 코드 제출 함수
 
-    public SubmissionResponse submitProblem(Long problemId, SubmissionRequest request) {
-        Problem problem = problemRepository.findById(problemId)
-                .orElseThrow(() -> new IllegalArgumentException("문제가 존재하지 않습니다."));
-        User user = userRepository.findById(request.getUserId())
-                .orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다."));
+//    public SubmissionResponse submitProblem(Long problemId, SubmissionRequest request) {
+//        Problem problem = problemRepository.findById(problemId)
+//                .orElseThrow(() -> new IllegalArgumentException("문제가 존재하지 않습니다."));
+//        User user = userRepository.findById(request.getUserId())
+//                .orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다."));
+//
+//        List<Testcase> testcases = new ArrayList<>();
+//        String executableCode = generateExecutableCode(request.getCode(), testcases);
+//
+//        /* Todo: 실제로 샌드박스 환경에서 실행하는 코드로 변경하고 요청을 보내야합니다.
+//        String stdout = sandboxApi.execute(executableCode);
+//        List<Boolean> testResults = Arrays.stream(
+//                        stdout.replaceAll("[\\[\\] ]", "").split(","))
+//                .map(Boolean::parseBoolean)
+//                .toList();
+//        */
+//
+//        List<SubmissionStatus> testResults = new ArrayList<>();
+//        for (int i=0; i < testcases.size(); i++) {
+//            testResults.add(SubmissionStatus.SUCCESS);
+//        }
+//
+//        double runtime =  ThreadLocalRandom.current().nextDouble(0.1, 2.0);
+//        double memory = ThreadLocalRandom.current().nextDouble(10, 100);
+//
+////        double runtime = new Random().nextDouble(0.1, 2.0); // Simulate runtime in seconds
+////        double memory = new Random().nextDouble(10, 100); // Simulate memory usage in MB
+//        sleep((int)runtime*1000); // Simulate execution time
+//
+//        // 결과 받아서 저장하기
+//        Submission submission = Submission.toEntity(
+//                request.getCode(),
+//                request.getCodingLanguage(),
+//                SubmissionStatus.SUCCESS, // 실제로는 testResults에 따라 다르게 설정해야 합니다.
+//                runtime,
+//                memory,
+//                user,
+//                problem
+//        );
+//
+//        submissionService.saveSubmissionAndLeaderboard(submission, request, user);
+//
+//        return SubmissionResponse.of(testResults);
+//    }
 
-        List<Testcase> testcases = new ArrayList<>();
-        String executableCode = generateExecutableCode(request.getCode(), testcases);
-
-        /* Todo: 실제로 샌드박스 환경에서 실행하는 코드로 변경하고 요청을 보내야합니다.
-        String stdout = sandboxApi.execute(executableCode);
-        List<Boolean> testResults = Arrays.stream(
-                        stdout.replaceAll("[\\[\\] ]", "").split(","))
-                .map(Boolean::parseBoolean)
-                .toList();
-        */
-
-        List<SubmissionStatus> testResults = new ArrayList<>();
-        for (int i=0; i < testcases.size(); i++) {
-            testResults.add(SubmissionStatus.SUCCESS);
-        }
-
-        double runtime =  ThreadLocalRandom.current().nextDouble(0.1, 2.0);
-        double memory = ThreadLocalRandom.current().nextDouble(10, 100);
-
-//        double runtime = new Random().nextDouble(0.1, 2.0); // Simulate runtime in seconds
-//        double memory = new Random().nextDouble(10, 100); // Simulate memory usage in MB
-        sleep((int)runtime*1000); // Simulate execution time
-
-        // 결과 받아서 저장하기
-        Submission submission = Submission.toEntity(
-                request.getCode(),
-                request.getCodingLanguage(),
-                SubmissionStatus.SUCCESS, // 실제로는 testResults에 따라 다르게 설정해야 합니다.
-                runtime,
-                memory,
-                user,
-                problem
-        );
-
-        submissionService.saveSubmissionAndLeaderboard(submission, request, user);
-
-        return SubmissionResponse.of(testResults);
-    }
-
-
-
-    public SubmissionResponse submitProblemWithMq(Long problemId, SubmissionRequest request) {
+    /**
+     * mq를 사용했을 때의 코드 제출 함수입니다.
+     * 문제 ID와 제출 요청을 받아서 MQ에 메시지를 보내고, 초기 상태로 SubmissionCreatedResponse를 반환합니다.
+     * @param problemId 문제 ID
+     *                  @param request 제출 요청
+     */
+    @Transactional
+    public SubmissionCreatedResponse submitProblem(Long problemId, SubmissionRequest request) {
         Problem problem = problemRepository.findById(problemId)
                 .orElseThrow(() -> new IllegalArgumentException("문제가 존재하지 않습니다."));
         User user = userRepository.findById(1L)
                 .orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다."));
 
-        ProblemDto problemDto = ProblemDtoMapper.fromEntity(problem);
-        UserDto userDto = new UserDto(user.getId(), user.getNickname());
-        SubmissionMessageDto submissionMessageDto = new SubmissionMessageDto(request, userDto, problemDto);
-        rabbitMqService.sendMessage(submissionMessageDto);
+        double runtime =  ThreadLocalRandom.current().nextDouble(0.1, 2.0);
+        double memory = ThreadLocalRandom.current().nextDouble(10, 100);
 
+        Submission submission = Submission.toEntity(
+                request.getCode(),
+                request.getCodingLanguage(),
+                SubmissionStatus.PENDING, // polling 방식으로 처리하기 때문에 PENDING 상태로 저장
+                runtime,
+                memory,
+                user,
+                problem
+        );
         // MQ consumer에서 submission 저장을 한다.
-        // client에서 1~2초 간격으로 db 저장데이터를 확인한다. 그 도중에는 로딩 중 표시를 사용자에게 노출
+        // User정보와 Problem정보는 필요없기 때문에 submissionId만 보냄
+        Submission sub = submissionRepository.save(submission);
+        Long submissionId = sub.getId();
+         SubmissionRequestMessageDto messageDto = SubmissionRequestMessageDto.of(
+                 submissionId,
+                request.getContestId()
+        );
+        rabbitMqService.sendMessage(messageDto);
 
-        // waiting response 필요
-        List<SubmissionStatus> testResults = new ArrayList<>();
-        return SubmissionResponse.of(testResults);
+        return  SubmissionCreatedResponse.of(submissionId);// 초기에는 빈 리스트 반환, 실제 결과는 MQ에서 처리됨
     }
-
 
     /**
      * 샌드박스 환경에서 실행할 수 있는 Java 프로그램 코드를 생성합니다.
