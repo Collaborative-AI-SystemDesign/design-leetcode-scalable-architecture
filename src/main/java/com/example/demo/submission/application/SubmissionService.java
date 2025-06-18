@@ -46,7 +46,7 @@ public class SubmissionService {
 //    }
     public Submission getSubmission(Long submissionId) {
         return submissionRepository.findById(submissionId)
-                .orElseThrow(() -> new IllegalArgumentException("Submission not found with id: " + submissionId));
+                .orElseThrow(() -> new IllegalArgumentException("Submission with id=" + submissionId + " not found"));
     }
 
     /**

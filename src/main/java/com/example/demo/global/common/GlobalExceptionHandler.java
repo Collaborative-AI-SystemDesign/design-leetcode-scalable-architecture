@@ -43,4 +43,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Void>> handleAllExceptions(Exception ex) {
         return new ResponseEntity<>(ApiResponse.fail("An unexpected error occurred: " + ex.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiResponse<Void>> handleIllegalArgument(IllegalArgumentException ex) {
+        // ex.getMessage() 에는 "Submission not found with id: ..." 같은 메시지가 담겨있겠죠
+        return new ResponseEntity<>(ApiResponse.fail("Database resource not found: " + ex.getMessage()), HttpStatus.NOT_FOUND
+        );
+    }
 }
