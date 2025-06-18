@@ -140,7 +140,7 @@ public class ProblemService {
     public SubmissionCreatedResponse submitProblem(Long problemId, SubmissionRequest request) {
         Problem problem = problemRepository.findById(problemId)
                 .orElseThrow(() -> new IllegalArgumentException("문제가 존재하지 않습니다."));
-        User user = userRepository.findById(1L)
+        User user = userRepository.findById(request.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다."));
 
         double runtime =  ThreadLocalRandom.current().nextDouble(0.1, 2.0);
