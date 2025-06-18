@@ -38,12 +38,13 @@ class RabbitMqServiceTest {
         ReflectionTestUtils.setField(existing, "id", submissionId);
         existing.setStatus(SubmissionStatus.PENDING);
         User user = User.toEntity(1L, "alice");
+        Long contestId = 7L;
         existing.setUser(user);
         when(submissionRepository.findById(submissionId))
                 .thenReturn(Optional.of(existing));
 
         SubmissionResultMessageDto msg =
-                SubmissionResultMessageDto.of(submissionId, 7L ,SubmissionStatus.SUCCESS);
+                SubmissionResultMessageDto.of(submissionId, contestId ,SubmissionStatus.SUCCESS);
 
         // when
         rabbitMqService.handleResult(msg);
@@ -54,6 +55,6 @@ class RabbitMqServiceTest {
         // 저장 호출 검증
         verify(submissionRepository).save(existing);
         // 리더보드 서비스 호출 검증
-        verify(leaderboardService).saveLeaderboard(7L, user);
+        verify(leaderboardService).saveLeaderboard(contestId, user);
     }
 }
