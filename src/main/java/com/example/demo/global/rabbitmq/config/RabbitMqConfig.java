@@ -52,7 +52,7 @@ public class RabbitMqConfig {
      */
     @Bean
     public DirectExchange submissionExchange() {
-        return new DirectExchange(exchangeName, false, true);
+        return new DirectExchange(exchangeName);
     }
 
     /**
