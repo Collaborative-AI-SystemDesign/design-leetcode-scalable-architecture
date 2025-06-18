@@ -1,9 +1,9 @@
 package com.example.demo.submission.domain;
 
-import com.example.demo.user.domain.User;
 import com.example.demo.global.enums.CodingLanguages;
 import com.example.demo.global.enums.SubmissionStatus;
 import com.example.demo.problem.domain.Problem;
+import com.example.demo.user.domain.User;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -12,13 +12,21 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "submission")
 @Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class Submission {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @SequenceGenerator(
+            name = "submission_seq",
+            sequenceName = "submission_seq"
+    )
+    @GeneratedValue(
+            strategy = GenerationType.SEQUENCE,
+            generator = "submission_seq"
+    )
     private Long id;
 
     private String code;

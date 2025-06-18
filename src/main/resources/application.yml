@@ -39,10 +39,22 @@ spring:
 #    password: guest # RabbitMQ 웹 관리 콘솔 비밀번호
 
 rabbitmq:
-  queue:
-    name: test-queue # 사용할 queue 이름
+  # 큐 이름
+  request:
+    queue:
+      name: submission-request-queue
+    routing:
+      key: submission-request-route
+
+  result:
+    queue:
+      name: submission-result-queue
+    routing:
+      key: submission-result-route
+
+  # 교환기 이름
   exchange:
-    name: test-exchange # 사용할 exchange 이름
+    name: submission-exchange
   routing:
     key: test-key
 #  queue:

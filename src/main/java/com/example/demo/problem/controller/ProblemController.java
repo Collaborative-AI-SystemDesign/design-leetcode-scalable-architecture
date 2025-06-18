@@ -6,7 +6,7 @@ import com.example.demo.problem.controller.request.PagingResponse;
 import com.example.demo.problem.controller.request.SubmissionRequest;
 import com.example.demo.problem.controller.response.ProblemDetailResponse;
 import com.example.demo.problem.controller.response.ProblemResponse;
-import com.example.demo.problem.controller.response.SubmissionResponse;
+import com.example.demo.problem.controller.response.SubmissionCreatedResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -49,8 +49,15 @@ public class ProblemController {
         return ApiResponse.success(problemService.getDetailProblem(problemId));
     }
 
+//    @PostMapping("/problems/{problemId}/submission")
+//    public ApiResponse<SubmissionResponse> submitProblem(
+//            @PathVariable("problemId") long problemId,
+//            @RequestBody SubmissionRequest request) {
+//        return ApiResponse.success(problemService.submitProblem(problemId, request));
+//    }
+
     @PostMapping("/problems/{problemId}/submission")
-    public ApiResponse<SubmissionResponse> submitProblem(
+    public ApiResponse<SubmissionCreatedResponse> submitCode(
             @PathVariable("problemId") long problemId,
             @RequestBody SubmissionRequest request) {
         return ApiResponse.success(problemService.submitProblem(problemId, request));
