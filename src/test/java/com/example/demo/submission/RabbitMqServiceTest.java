@@ -7,6 +7,7 @@ import com.example.demo.problem.controller.response.SubmissionResultMessageDto;
 import com.example.demo.submission.domain.Submission;
 import com.example.demo.submission.domain.api.SubmissionRepository;
 import com.example.demo.user.domain.User;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -31,6 +32,7 @@ class RabbitMqServiceTest {
     RabbitMqService  rabbitMqService;
 
     @Test
+    @DisplayName("spring consume from result-queue 테스트 - 엔티티 상태 업데이트 및 리더보드 호출")
     void handleResult_updatesStatusAndCallsLeaderboard() {
         // given
         long submissionId = 99L;
