@@ -49,7 +49,6 @@ public class RabbitMqService {
      *
      * @return
      */
-    @Async("mqExcutor")
     public void sendMessage(SubmissionRequestMessageDto submissionRequestMessageDto) {
         log.info("************ messagge send: {}", submissionRequestMessageDto.getSubmissionId());
         this.rabbitTemplate.convertAndSend(exchangeName,requestRoutingKey,submissionRequestMessageDto);

@@ -161,11 +161,11 @@ public class ProblemService {
         // User정보와 Problem정보는 필요없기 때문에 submissionId만 보냄
         Submission sub = submissionRepository.save(submission);
         Long submissionId = sub.getId();
-         SubmissionRequestMessageDto messageDto = SubmissionRequestMessageDto.of(
+        SubmissionRequestMessageDto messageDto = SubmissionRequestMessageDto.of(
                  submissionId,
                 request.getContestId()
         );
-//        rabbitMqService.sendMessage(messageDto);
+        rabbitMqService.sendMessage(messageDto);
 
         return  SubmissionCreatedResponse.of(submissionId);// 초기에는 빈 리스트 반환, 실제 결과는 MQ에서 처리됨
     }
