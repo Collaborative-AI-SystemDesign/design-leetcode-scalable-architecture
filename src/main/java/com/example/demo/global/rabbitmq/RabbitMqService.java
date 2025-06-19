@@ -57,7 +57,10 @@ public class RabbitMqService {
      * 1. Queue 에서 메세지를 받도록 함.
      **/
     @Transactional
-    @RabbitListener(queues = "${rabbitmq.result.queue.name}")
+    @RabbitListener(
+            queues = "${rabbitmq.result.queue.name}",
+            ackMode = "NONE"
+    )
     public void handleResult(SubmissionResultMessageDto submissionResultMessageDto) {
         // 1) 기존 Submission 엔티티 조회
         Long submissionId = submissionResultMessageDto.getSubmissionId();

@@ -29,6 +29,10 @@ spring:
 
   # rabbitmq 설정
   rabbitmq:
+    listener:
+      simple:
+        acknowledge-mode: none
+
     host: ${RABBITMQ_HOST} # RabbitMQ host ip
     port: 5672 # RabbitMQ port
     username: ${RABBITMQ_USERNAME} # RabbitMQ 웹 관리 콘솔 아이디
