@@ -18,18 +18,17 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/problems")
 public class ProblemController {
     private final ProblemService problemService;
 
-    @GetMapping("")
+    @GetMapping("/problems")
     public ApiResponse<List<ProblemResponse>> getProblems(
             @RequestParam("start") long start,
             @RequestParam("end") long end) {
         return ApiResponse.success(problemService.getProblems(start, end));
     }
 
-    @GetMapping("/offset")
+    @GetMapping("/problems/offset")
     public ApiResponse<PagingResponse<ProblemResponse>> getProblemsByOffset(
             @PageableDefault(page = 0, size = 100, sort = "id", direction = Sort.Direction.ASC) Pageable pageable
     ) {
@@ -37,14 +36,14 @@ public class ProblemController {
         return ApiResponse.success(PagingResponse.from(pageResult));
     }
 
-    @GetMapping("/cursor")
+    @GetMapping("/problems/cursor")
     public ApiResponse<List<ProblemResponse>> getProblemsByCursor(
             @RequestParam("cursor") Long cursor,
             @RequestParam("limit") int limit) {
         return ApiResponse.success(problemService.getProblemsByCursor(cursor, limit));
     }
 
-    @GetMapping("/{problemId}")
+    @GetMapping("/problems/{problemId}")
     public ApiResponse<ProblemDetailResponse> getProblemById(
             @PathVariable("problemId") long problemId) {
         return ApiResponse.success(problemService.getDetailProblem(problemId));
@@ -57,7 +56,7 @@ public class ProblemController {
 //        return ApiResponse.success(problemService.submitProblem(problemId, request));
 //    }
 
-    @PostMapping("/{problemId}/submission")
+    @PostMapping("/problems/{problemId}/submission")
     public ApiResponse<SubmissionCreatedResponse> submitCode(
             @PathVariable("problemId") long problemId,
             @RequestBody SubmissionRequest request) {
