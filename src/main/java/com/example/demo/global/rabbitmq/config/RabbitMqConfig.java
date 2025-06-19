@@ -87,6 +87,17 @@ public class RabbitMqConfig {
         return connectionFactory;
     }
 
+    @Bean
+    public SimpleRabbitListenerContainerFactory rabbitListenerContainerFactory(
+            ConnectionFactory cf,
+            MessageConverter converter) {
+        SimpleRabbitListenerContainerFactory factory =
+                new SimpleRabbitListenerContainerFactory();
+        factory.setConnectionFactory(cf);
+        factory.setMessageConverter(converter);
+        return factory;
+    }
+
     /**
      * RabbitTemplate
      * ConnectionFactory 로 연결 후 실제 작업을 위한 Template
