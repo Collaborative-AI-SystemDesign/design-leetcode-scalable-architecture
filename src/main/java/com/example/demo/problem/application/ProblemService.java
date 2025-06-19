@@ -136,7 +136,7 @@ public class ProblemService {
      * @param problemId 문제 ID
      *                  @param request 제출 요청
      */
-    @Transactional
+//    @Transactional
     public SubmissionCreatedResponse submitProblem(Long problemId, SubmissionRequest request) {
         Problem problem = problemRepository.findById(problemId)
                 .orElseThrow(() -> new IllegalArgumentException("문제가 존재하지 않습니다."));
