@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/v1/contests")
+@RequestMapping("/contests")
 public class LeaderBoardController {
 
     private final LeaderBoardService leaderBoardService;
