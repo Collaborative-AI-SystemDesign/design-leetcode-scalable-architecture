@@ -19,14 +19,7 @@ import java.time.LocalDateTime;
 public class Submission {
 
     @Id
-    @SequenceGenerator(
-            name = "submission_seq",
-            sequenceName = "submission_seq"
-    )
-    @GeneratedValue(
-            strategy = GenerationType.SEQUENCE,
-            generator = "submission_seq"
-    )
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String code;

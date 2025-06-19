@@ -140,10 +140,10 @@ public class ProblemService {
     public SubmissionCreatedResponse submitProblem(Long problemId, SubmissionRequest request) {
         Problem problem = problemRepository.findById(problemId)
                 .orElseThrow(() -> new IllegalArgumentException("문제가 존재하지 않습니다."));
-//        log.info("step 1");
+
         User user = userRepository.findById(request.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다."));
-//        log.info("step 2");
+
         double runtime =  ThreadLocalRandom.current().nextDouble(0.1, 2.0);
         double memory = ThreadLocalRandom.current().nextDouble(10, 100);
 
@@ -159,15 +159,13 @@ public class ProblemService {
 
         // MQ consumer에서 submission 저장을 한다.
         // User정보와 Problem정보는 필요없기 때문에 submissionId만 보냄
-//        Submission sub = submissionRepository.save(submission);
-//        log.info("step 3");
-        Long submissionId = 1L; // sub.getId();
+        Submission sub = submissionRepository.save(submission);
+        Long submissionId = sub.getId();
          SubmissionRequestMessageDto messageDto = SubmissionRequestMessageDto.of(
                  submissionId,
                 request.getContestId()
         );
-        //rabbitMqService.sendMessage(messageDto);
-//        log.info("step 4");
+//        rabbitMqService.sendMessage(messageDto);
 
         return  SubmissionCreatedResponse.of(submissionId);// 초기에는 빈 리스트 반환, 실제 결과는 MQ에서 처리됨
     }
