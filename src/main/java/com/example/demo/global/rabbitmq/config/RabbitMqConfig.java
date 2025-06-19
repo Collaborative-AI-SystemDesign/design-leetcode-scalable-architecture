@@ -7,6 +7,7 @@ import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
+import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
@@ -77,14 +78,13 @@ public class RabbitMqConfig {
      * RabbitMQ 연동을 위한 ConnectionFactory 빈을 생성하여 반환
      **/
     @Bean
-    public SimpleRabbitListenerContainerFactory rabbitListenerContainerFactory(
-            ConnectionFactory cf,
-            MessageConverter converter) {
-        SimpleRabbitListenerContainerFactory factory =
-                new SimpleRabbitListenerContainerFactory();
-        factory.setConnectionFactory(cf);
-        factory.setMessageConverter(converter);
-        return factory;
+    public CachingConnectionFactory connectionFactory() {
+        CachingConnectionFactory connectionFactory = new CachingConnectionFactory();
+        connectionFactory.setHost(rabbitMqProperties.getHost());
+        connectionFactory.setPort(rabbitMqProperties.getPort());
+        connectionFactory.setUsername(rabbitMqProperties.getUsername());
+        connectionFactory.setPassword(rabbitMqProperties.getPassword());
+        return connectionFactory;
     }
 
     /**
