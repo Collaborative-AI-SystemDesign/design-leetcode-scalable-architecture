@@ -159,9 +159,9 @@ public class ProblemService {
 
         // MQ consumer에서 submission 저장을 한다.
         // User정보와 Problem정보는 필요없기 때문에 submissionId만 보냄
-        Submission sub = submissionRepository.save(submission);
+//        Submission sub = submissionRepository.save(submission);
 //        log.info("step 3");
-        Long submissionId = sub.getId();
+        Long submissionId = 1L; // sub.getId();
          SubmissionRequestMessageDto messageDto = SubmissionRequestMessageDto.of(
                  submissionId,
                 request.getContestId()
