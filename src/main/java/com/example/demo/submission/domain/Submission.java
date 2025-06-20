@@ -1,5 +1,6 @@
 package com.example.demo.submission.domain;
 
+import com.example.demo.global.BaseEntity;
 import com.example.demo.global.enums.CodingLanguages;
 import com.example.demo.global.enums.SubmissionStatus;
 import com.example.demo.problem.domain.Problem;
@@ -16,7 +17,7 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Submission {
+public class Submission extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,8 +34,6 @@ public class Submission {
     private double runtime; // ms
 
     private double memory;  // MB
-
-    private LocalDateTime submittedAt;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -53,7 +52,6 @@ public class Submission {
                 .status(status)
                 .runtime(runtime)
                 .memory(memory)
-                .submittedAt(LocalDateTime.now())
                 .user(user)
                 .problem(problem)
                 .build();
