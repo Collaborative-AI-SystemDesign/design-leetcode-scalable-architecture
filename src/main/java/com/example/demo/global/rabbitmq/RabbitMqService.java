@@ -57,25 +57,25 @@ public class RabbitMqService {
     /**
      * 1. Queue 에서 메세지를 받도록 함.
      **/
-    @Transactional
-    @RabbitListener(
-            queues = "${rabbitmq.result.queue.name}",
-            ackMode = "NONE"
-    )
-    public void handleResult(SubmissionResultMessageDto submissionResultMessageDto) {
-        // 1) 기존 Submission 엔티티 조회
-        Long submissionId = submissionResultMessageDto.getSubmissionId();
-        SubmissionStatus status = submissionResultMessageDto.getStatus();
-        Submission submission = submissionRepository.findById(submissionId)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        "Submission not found: " + submissionId));
-
-        // 2) 상태 업데이트
-        submission.setStatus(status);// SUCCESS or FAILURE
-
-        submissionRepository.save(submission);
-        leaderboardService.saveLeaderboard( submissionResultMessageDto.getContestId(), submission.getUser());
-    }
+//    @Transactional
+//    @RabbitListener(
+//            queues = "${rabbitmq.result.queue.name}",
+//            ackMode = "NONE"
+//    )
+//    public void handleResult(SubmissionResultMessageDto submissionResultMessageDto) {
+//        // 1) 기존 Submission 엔티티 조회
+//        Long submissionId = submissionResultMessageDto.getSubmissionId();
+//        SubmissionStatus status = submissionResultMessageDto.getStatus();
+//        Submission submission = submissionRepository.findById(submissionId)
+//                .orElseThrow(() -> new EntityNotFoundException(
+//                        "Submission not found: " + submissionId));
+//
+//        // 2) 상태 업데이트
+//        submission.setStatus(status);// SUCCESS or FAILURE
+//
+//        submissionRepository.save(submission);
+//        leaderboardService.saveLeaderboard( submissionResultMessageDto.getContestId(), submission.getUser());
+//    }
 
     /**
      * 샌드박스 환경에서 실행할 수 있는 Java 프로그램 코드를 생성합니다.
