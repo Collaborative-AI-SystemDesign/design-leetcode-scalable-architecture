@@ -63,6 +63,11 @@
 ## 시스템 디자인
 <img width="1009" height="775" alt="image" src="https://github.com/user-attachments/assets/c11fb70c-75e6-4d29-a929-da5065c14bef" />
 
+- API Server: This.
+  
+- Code Sandbox: https://github.com/Collaborative-AI-SystemDesign/leetcode-sandbox
+  
+- Result Server: https://github.com/Collaborative-AI-SystemDesign/leetcode-sandbox-consumer
 
 
 ## 📊 성능 최적화 현황
